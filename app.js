@@ -6,10 +6,14 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const mongoose = require("mongoose");
 require("dotenv").config();
+const jwt = require("jsonwebtoken");
+const privateKey = "sdhskdnk";
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const menuRouter = require("./routes/Menu");
+const categoryRouter = require("./routes/Category");
+const userRouter = require("./routes/User");
 
 var app = express();
 mongoodConnect = process.env.DB_CONNECTION;
@@ -29,6 +33,17 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-app.use("/menu", menuRouter);
+app.use("/menu", validateUser, menuRouter);
+app.use("/category", categoryRouter);
+app.use("/users", userRouter);
+function validateUser(req, res, next) {
+  jwt.verify(req.headers["x-access-token"], privateKey, (err, decoded) => {
+    if (err) {
+      res.json(err);
+    } else {
+      req.body.userId = decoded.id;
+    }
+  });
+}
 
 module.exports = app;

@@ -18,5 +18,6 @@ const upload = multer({
 
 router.post("/create", upload.single("imageUrl"), MenuController.create); // upload.single karena hanya menggunakan satu foto.
 router.get("/show", MenuController.getAllData);
-
+router.get("get/:menuId", MenuController.getDataById);
+router.delete("/delete/:menuId", MenuController.deleteById);
 module.exports = router;
